@@ -25,11 +25,11 @@ There are three additional steps compared the original code generation procedure
 
    `TIM` in LL library should be selected in `Project Manager-Advance Settings`.
    
-   ![image-20220917145024951](https://raw.githubusercontent.com/zhuiyi1314/TinyML/main/img/30.png)
+   ![image-20220917145024951](https://raw.githubusercontent.com/zhuiyi1314/TinyML/main/img/31.png)
 
    In order to operate the header file later, don't forget to check option `Generate peripheral initialization as a pair of '.c/.h' files per peripheral` in the Code Generator when generating code.
    
-   <img src="https://raw.githubusercontent.com/zhuiyi1314/TinyML/main/img/31.png" alt="image-20220915093242012" style="zoom:67%;" />
+   <img src="https://raw.githubusercontent.com/zhuiyi1314/TinyML/main/img/30.png" alt="image-20220915093242012" style="zoom:67%;" />
 
 
 
@@ -53,9 +53,9 @@ There are three additional steps compared the original code generation procedure
 
 We use usb2micro usb cable to connect the development board and the upper computer to achieve communication. 
 
-<img src="https://raw.githubusercontent.com/zhuiyi1314/TinyML/main/img/33.png" alt="image-20220827121203762" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/zhuiyi1314/TinyML/main/img/34.jpg" alt="image-20220827121203762" style="zoom:50%;" />
 
 Afering connect the board to PC, run the `validation.py` , when seeing output like below, press the **reset button** shown in the picture, and the validation will start.
 
-![iShot_2022-08-27_12.04.57](https://raw.githubusercontent.com/zhuiyi1314/TinyML/main/img/34.png)
+![iShot_2022-08-27_12.04.57](https://raw.githubusercontent.com/zhuiyi1314/TinyML/main/img/33.png)
 
