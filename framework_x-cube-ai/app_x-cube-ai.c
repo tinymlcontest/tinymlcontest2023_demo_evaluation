@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -108,7 +108,12 @@ AI_ALIGNED(32)
 static ai_float out_data[AI_NETWORK_OUT_1_SIZE];
 /* static ai_u8 out_data[AI_NETWORK_OUT_1_SIZE_BYTES]; */
 
-/* Array of pointer to manage the model's input/output tensors */
+//ai_handle data_activations0[] = {NULL};
+
+/* AI objects ----------------------------------------------------------------*/
+
+//static ai_handle network = AI_HANDLE_NULL;
+
 static ai_buffer* ai_input;
 static ai_buffer* ai_output;
 
@@ -144,11 +149,11 @@ static int ai_boostrap(ai_handle *act_addr)
    *  used from the activations buffer. This is not mandatory.
    */
   for (int idx=0; idx < AI_NETWORK_IN_NUM; idx++) {
-  data_ins[idx] = ai_input[idx].data;
+	data_ins[idx] = ai_input[idx].data;
   }
 #else
   for (int idx=0; idx < AI_NETWORK_IN_NUM; idx++) {
-    ai_input[idx].data = data_ins[idx];
+	  ai_input[idx].data = data_ins[idx];
   }
 #endif
 
@@ -157,11 +162,11 @@ static int ai_boostrap(ai_handle *act_addr)
    *  used from the activations buffer. This is no mandatory.
    */
   for (int idx=0; idx < AI_NETWORK_OUT_NUM; idx++) {
-  data_outs[idx] = ai_output[idx].data;
+	data_outs[idx] = ai_output[idx].data;
   }
 #else
   for (int idx=0; idx < AI_NETWORK_OUT_NUM; idx++) {
-  ai_output[idx].data = data_outs[idx];
+	ai_output[idx].data = data_outs[idx];
   }
 #endif
 
@@ -209,6 +214,7 @@ int post_process(ai_i8* data[])
 /* USER CODE END 2 */
 
 /* Entry points --------------------------------------------------------------*/
+
 int aiInit(void) {
   ai_error err;
   /* Create and initialize the c-model */
@@ -224,7 +230,6 @@ int aiInit(void) {
 
   return 0;
 }
-
 /*
  * Run inference
  */
@@ -245,10 +250,11 @@ int aiRun(const void *in_data, void *out_data) {
 
   return 0;
 }
+
 void MX_X_CUBE_AI_Init(void)
 {
     /* USER CODE BEGIN 5 */
-    /* Activation/working buffer is allocated as a static memory chunk
+	/* Activation/working buffer is allocated as a static memory chunk
      * (bss section) */
     AI_ALIGNED(4)
     static ai_u8 activations[AI_NETWORK_DATA_ACTIVATIONS_SIZE];
@@ -259,8 +265,8 @@ void MX_X_CUBE_AI_Init(void)
 
 void MX_X_CUBE_AI_Process(void)
 {
-    /* USER CODE BEGIN 1 */
-  int nb_run = 20;
+    /* USER CODE BEGIN 6 */
+	int nb_run = 20;
     int res;
 
     /* Example of definition of the buffers to store the tensor input/output */
@@ -315,7 +321,7 @@ void MX_X_CUBE_AI_Process(void)
         /* Post-Process - process the output buffer */
         // ...
     }
-    /* USER CODE END 1 */
+    /* USER CODE END 6 */
 }
 #ifdef __cplusplus
 }

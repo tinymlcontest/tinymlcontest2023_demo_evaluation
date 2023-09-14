@@ -13,7 +13,7 @@ extern "C" {
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -29,7 +29,6 @@ void MX_X_CUBE_AI_Init(void);
 void MX_X_CUBE_AI_Process(void);
 int aiInit(void);
 int aiRun(const void *in_data, void *out_data);
-
 /* USER CODE BEGIN includes */
 /* USER CODE END includes */
 
@@ -46,8 +45,7 @@ int aiRun(const void *in_data, void *out_data);
 #define AI_ROUND(v_, type_) \
   (type_) ( ((v_)<0) ? ((v_)-0.5f) : ((v_)+0.5f) )
 
-
 #ifdef __cplusplus
 }
 #endif
-#endif /*__STMicroelectronics_X-CUBE-AI_7_2_0_H */
+#endif /*__STMicroelectronics_X-CUBE-AI_8_1_0_H */
