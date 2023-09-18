@@ -25,7 +25,7 @@ def main():
         os.makedirs('./log/')
     timeList = []
     port = args.com  # set port number
-    ser = serial.Serial(port=port, baudrate=args.baudrate)  # open the serial
+    ser = serial.Serial(port=port, baudrate=115200)  # set port number
     print(ser)
     ofp = open(file='log/res_{}.txt'.format(t), mode='w')  # make a new log file
 
@@ -184,10 +184,10 @@ def main():
     f.close()
 
 
+
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
-    argparser.add_argument('--com', type=str, default='com5')
-    argparser.add_argument('--baudrate', type=int, default=115200)
-    argparser.add_argument('--path_data', type=str,default='path/to/dataset')
+    argparser.add_argument('--com', type=str, default='com14')
+    argparser.add_argument('--path_data', type=str, default='F:/tinyml_contest_data_training/')
     args = argparser.parse_args()
     main()
