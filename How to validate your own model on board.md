@@ -1,6 +1,6 @@
 # How to validate the model with framework other than X-CUBE-AI on board
 
-In the folder `framework_your-own`, we provide a compressed evaluation C code based project named `TEST_OwnMODEL.zip`. In the project, the file `main.c` contains two functions related to the evaluation on board. Those two functions should be modified by the team with their own implementations. 
+In the folder `framework_your-own`, we provide a compressed evaluation C code based project named `TESTMODEL3.zip`. In the project, the file `main.c` contains two functions related to the evaluation on board. Those two functions should be modified by the team with their own implementations. 
 
 1. `Model_Init()` method is the function to load model weights, activation values, etc.
 
@@ -14,7 +14,7 @@ When validating your own model, you can write your own model weights loading and
 
 We use usb2micro usb cable to connect the development board and the upper computer to achieve communication. 
 
-<img src="https://raw.githubusercontent.com/zhuiyi1314/TinyML/main/img/341.png" alt="image-20220827121203762" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/zhuiyi1314/TinyML/main/img/341.jpg" alt="image-20220827121203762" style="zoom:50%;" />
 
 Afering connect the board to PC, run the `validation.py` , when seeing output like below, press the **reset button** shown in the picture, and the validation will start.
 
