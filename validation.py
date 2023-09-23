@@ -1,6 +1,5 @@
 import argparse
 import serial
-from datetime import datetime
 import time
 import numpy as np
 from sklearn.metrics import confusion_matrix
@@ -72,8 +71,6 @@ def main():
                                 send_str = str(testX[i][j][k][l]) + ' '
                                 ser.write(send_str.encode(encoding='utf8'))
 
-                    # Set a time point to represent that all data are sent and the development board starts to perform model inference.
-                    start_time = datetime.now()
                     # don't continue running the code until a "ok" is received
                     while ser.in_waiting < 2:
                         pass
@@ -87,20 +84,20 @@ def main():
                         ser.write(send_str.encode(encoding='utf8'))
                         time.sleep(0.01)
                     # receive results from the board, which is a string separated by commas
-                    while ser.in_waiting < 1:
+                    while ser.in_waiting < 10:
                         pass
-                    recv = ser.read(size=1).decode(encoding='utf8')
+                    recv = ser.read(size=10).decode(encoding='utf8')
                     ser.reset_input_buffer()
-                    end_time = datetime.now()
-                    results = recv.strip()
-                    if results == '0':
+                    # the format of recv is ['<result>','<dutation>']
+                    result = recv.split(',')[0]
+                    inference_latency = recv.split(',')[1]
+                    if result == '0':
                         y_pred_subject.append('0')
                     else:
                         y_pred_subject.append('1')
-                    # the total time minus sleep/halt time on PC and MCU
-                    timeList.append(
-                        ((end_time - start_time).seconds * 1000) + ((end_time - start_time).microseconds / 1000) - 44)
-                    ofp.write(str(results) + '\r')
+                    # inference latency in ms
+                    timeList.append(float(inference_latency) * 1000)
+                    ofp.write(str(result) + '\r')
 
         C = confusion_matrix(y_true_subject, y_pred_subject)
         if C.shape == (2, 2):
@@ -114,7 +111,7 @@ def main():
             if (C[1][1] + C[1][0]) != 0:
                 sensitivity = C[1][1] / (C[1][1] + C[1][0])
             else:
-                sensitivity = 0.0
+                sensitivity = 1.0
 
             FP_rate = C[0][1] / (C[0][1] + C[0][0])
 
@@ -187,7 +184,7 @@ def main():
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
-    argparser.add_argument('--com', type=str, default='com14')
+    argparser.add_argument('--com', type=str, default='com15')
     argparser.add_argument('--path_data', type=str, default='F:/tinyml_contest_data_training/')
     args = argparser.parse_args()
     main()
