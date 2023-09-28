@@ -106,7 +106,7 @@ def main():
             if (C[1][1] + C[0][1]) != 0:
                 precision = C[1][1] / (C[1][1] + C[0][1])
             else:
-                precision = 0.0
+                precision = 1.0
 
             if (C[1][1] + C[1][0]) != 0:
                 sensitivity = C[1][1] / (C[1][1] + C[1][0])
