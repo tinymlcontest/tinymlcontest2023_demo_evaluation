@@ -49,9 +49,14 @@ def main():
         subject_desc = f'Subject {subject_id}:'
         file_tqdm = tqdm(file_info_list, desc=subject_desc, leave=True)
 
+        fp = 0.0
+        tn = 0.0
+        fn = 0.0
+        tp = 0.0
+
         for file_info in file_tqdm:
             filename, true_label = file_info
-            y_true_subject.append(true_label)
+            y_true_subject.append(int(true_label))
             # load data from txt files and reshape to (1, 1, 1250, 1)
             testX = txt_to_numpy(args.path_data + filename, 1250).reshape(1, 1, 1250, 1)
             for i in range(0, testX.shape[0]):
@@ -88,50 +93,72 @@ def main():
                         pass
                     recv = ser.read(size=10).decode(encoding='utf8')
                     ser.reset_input_buffer()
+                    # print(f"\n{recv}")
                     # the format of recv is ['<result>','<dutation>']
                     result = recv.split(',')[0]
                     inference_latency = recv.split(',')[1]
                     if result == '0':
-                        y_pred_subject.append('0')
+                        y_pred_subject.append(0)
                     else:
-                        y_pred_subject.append('1')
+                        y_pred_subject.append(1)
                     # inference latency in ms
                     timeList.append(float(inference_latency) * 1000)
                     ofp.write(str(result) + '\r')
 
-        C = confusion_matrix(y_true_subject, y_pred_subject)
-        if C.shape == (2, 2):
-            acc = (C[0][0] + C[1][1]) / (C[0][0] + C[0][1] + C[1][0] + C[1][1])
+        y_true_subject = np.array(y_true_subject)
+        y_pred_subject = np.array(y_pred_subject)
+        
+        nva_idx = y_true_subject == 0
+        va_idx = y_true_subject == 1
+        
+        fp += (len(y_true_subject[nva_idx]) - (y_pred_subject[nva_idx] == y_true_subject[nva_idx]).sum()).item()
+        tn += ((y_pred_subject[nva_idx] == y_true_subject[nva_idx]).sum()).item()
+        fn += (len(y_true_subject[va_idx]) - (y_pred_subject[va_idx] == y_true_subject[va_idx]).sum()).item()
+        tp += ((y_pred_subject[va_idx] == y_true_subject[va_idx]).sum()).item()
+        
+        acc = (tn + tp) / (tn + fp + fn + tp)
 
-            if (C[1][1] + C[0][1]) != 0:
-                precision = C[1][1] / (C[1][1] + C[0][1])
-            else:
-                precision = 1.0
+        if (tp + fn == 0):
+            precision = 1.0
+        elif (tp + fp) != 0:
+            precision = tp / (tp + fp)
+        else:
+            precision = 0.0
 
-            if (C[1][1] + C[1][0]) != 0:
-                sensitivity = C[1][1] / (C[1][1] + C[1][0])
-            else:
-                sensitivity = 1.0
+        if (tp + fn) != 0:
+            sensitivity = tp / (tp + fn)
+        else:
+            sensitivity = 1.0
 
-            FP_rate = C[0][1] / (C[0][1] + C[0][0])
+        if (fp + tn) != 0:
+            FP_rate = fp / (fp + tn)
+        else:
+            FP_rate = 1.0
 
-            if (C[1][1] + C[1][0]) != 0:
-                PPV = C[1][1] / (C[1][1] + C[1][0])
-            else:
-                PPV = 0.0
+        # for the case: there is no VA segs for the patient
+        if tp + fn == 0:
+            PPV = 1
+        # for the case: there is some VA segs
+        elif tp + fp == 0 and tp + fn != 0:
+            PPV = 0
+        else:
+            PPV = tp / (tp + fp)
 
-            NPV = C[0][0] / (C[0][0] + C[0][1])
+        if (tn + fp) != 0:
+            NPV = tn / (tn + fp)
+        else:
+            NPV = 1.0
 
-            if (precision + sensitivity) != 0:
-                F1_score = (2 * precision * sensitivity) / (precision + sensitivity)
-            else:
-                F1_score = 0.0
+        if (precision + sensitivity) != 0:
+            F1_score = (2 * precision * sensitivity) / (precision + sensitivity)
+        else:
+            F1_score = 0.0
 
-            if ((2 ** 2) * precision + sensitivity) != 0:
-                F_beta_score = (1 + 2 ** 2) * (precision * sensitivity) / ((2 ** 2) * precision + sensitivity)
-            else:
-                F_beta_score = 0.0
-
+        if ((2 ** 2) * precision + sensitivity) != 0:
+            F_beta_score = (1 + 2 ** 2) * (precision * sensitivity) / ((2 ** 2) * precision + sensitivity)
+        else:
+            F_beta_score = 0.0
+        
         all_metrics.append([acc, precision, sensitivity, FP_rate, PPV, NPV, F1_score, F_beta_score])
         if F_beta_score > 0.95:
             subjects_above_threshold += 1
